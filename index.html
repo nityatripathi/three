@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Three.js - Fundamentals with animation</title>
+    <style>
+
+    </style>
+  </head>
+  <body>
+<canvas id="c"></canvas>
+  <script  type="importmap">{
+	"imports": {
+		"three": "https://threejs.org/build/three.module.js"
+	}
+}</script>
+  </body>
+
+  <script type="module">
+// Three.js - Fundamentals with animation
+// from https://threejs.org/manual/examples/fundamentals-with-animation.html
+
+import * as THREE from 'three';
+
+//NEW
+import {OBJLoader} from 'https://threejs.org/examples/jsm/loaders/OBJLoader.js';
+
+function main() {
+
+	const canvas = document.querySelector( '#c' );
+	const renderer = new THREE.WebGLRenderer( { antialias: true, canvas } );
+
+	const fov = 75;
+	const aspect = 2; // the canvas default
+	const near = 0.1;
+	const far = 5;
+	const camera = new THREE.PerspectiveCamera( fov, aspect, near, far );
+	camera.position.z = 2;
+
+	const scene = new THREE.Scene();
+
+	{
+
+		const color = 0xFFFFFF;
+		const intensity = 3;
+		const light = new THREE.DirectionalLight( color, intensity );
+		light.position.set( - 1, 2, 4 );
+		scene.add( light );
+
+	}
+	
+	//NEW
+	{
+		const objLoader = new OBJLoader();
+		objLoader.load('breakfast_room.obj', (root) => {
+		scene.add(root);
+		});
+	}
+	
+	const boxWidth = 1;
+	const boxHeight = 1;
+	const boxDepth = 1;
+	const geometry = new THREE.BoxGeometry( boxWidth, boxHeight, boxDepth );
+
+	const loader = new THREE.TextureLoader();
+	const texture = loader.load( 'https://i.iheart.com/v3/re/new_assets/57f5174d654b9edfd3e746eb?ops=contain(1480,0)' );
+	texture.colorSpace = THREE.SRGBColorSpace;
+
+	const material = new THREE.MeshPhongMaterial( { map: texture } ); // greenish blue
+
+	const cube = new THREE.Mesh( geometry, material );
+	scene.add( cube );
+
+	cube.position.x = -1.8;
+
+	const sgeometry = new THREE.SphereGeometry( 0.8, 32, 16 );
+    const smaterial = new THREE.MeshPhongMaterial( { color: 0xff0000 } );
+    const sphere = new THREE.Mesh( sgeometry, smaterial );
+    scene.add( sphere );
+
+    //sphere.position.x = -1.8;
+
+    const cgeometry = new THREE.CylinderGeometry( 0.6, 0.6, 1.4, 32 ); 
+	const cmaterial = new THREE.MeshPhongMaterial( {color: 0xffff00} ); 
+	const cylinder = new THREE.Mesh( cgeometry, cmaterial ); 
+	scene.add( cylinder );
+
+    cylinder.position.x = 1.8;
+
+	function render( time ) {
+
+		time *= 0.001; // convert time to seconds
+
+		cube.rotation.x = time;
+		cube.rotation.y = time;
+
+		sphere.rotation.x = time;
+		sphere.rotation.y = time;
+
+		cylinder.rotation.x = time;
+		cylinder.rotation.y = time;
+
+		renderer.render( scene, camera );
+
+		requestAnimationFrame( render );
+
+	}
+
+	requestAnimationFrame( render );
+
+}
+
+main();
+
+  </script>
+
+</html>
